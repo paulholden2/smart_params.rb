@@ -78,6 +78,10 @@ module SmartParams
     def claim(raw)
       raw_value = dug(raw)
 
+      if raw_value.nil? && type.default?
+        raw_value = type[]
+      end
+
       # If value provided is a hash, check if it's dirty. See #dirty? for
       # more info.
       if nullable? && raw_value.is_a?(Hash)
@@ -134,7 +138,6 @@ module SmartParams
       @subfields << self.class.new(keychain: [*keychain, key], type: type, nullable: nullable, &subfield)
     end
 
-    # Very busy method with recent changes. TODO: clean-up
     private def dug(raw)
       return raw if keychain.empty?
 
